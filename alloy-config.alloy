@@ -1,0 +1,21 @@
+local.file_logs "app_logs" {
+  path = "/app/app.log"
+  format = "auto"
+}
+
+remote.http "app_metrics" {
+  url = "http://app:5000/metrics"
+}
+
+prometheus.receiver "prom_input" {
+  targets = [remote.http.app_metrics.scraper]
+}
+
+exporter.prometheus "metrics_out" {
+  targets = ["0.0.0.0:12345"]
+  forward_to = [prom_input.receiver]
+}
+
+exporter.loki "logs_out" {
+  forward_to = [local.file_logs.app_logs.receiver]
+}

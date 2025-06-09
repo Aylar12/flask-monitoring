@@ -1,0 +1,35 @@
+services:
+  app:
+    build: .
+
+    volumes:
+      - ./app.log:/app/app.log
+    ports: -5000:5000
+
+  alloy:
+    image: grafana/alloy:latest
+    volumes:
+      - ./alloy-config.alloy:/etc/alloy/config.alloy
+      - ./app.log:/app/app.log
+    command: --config.file=/etc/alloy/config.alloy
+    ports:
+      - "12345:12345"
+
+  prometheus:
+    image: prom/prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
