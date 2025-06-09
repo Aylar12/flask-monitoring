@@ -1,7 +1,7 @@
 services:
   app:
-    build: .
-
+    build:
+      context: .
     volumes:
       - ./app.log:/app/app.log
     ports: -5000:5000
